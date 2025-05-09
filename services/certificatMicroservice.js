@@ -4,11 +4,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const PROTO_PATH = '../protos/certificat.proto';
-<<<<<<< HEAD
 const MONGO_URI = 'mongodb://localhost:27017';
-=======
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017';
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
 const DB_NAME = 'monmicroservice';
 
 let db;
@@ -23,22 +19,10 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const certificatProto = grpc.loadPackageDefinition(packageDefinition).certificat;
 
 async function connectToDatabase() {
-<<<<<<< HEAD
   const client = new MongoClient(MONGO_URI);
   await client.connect();
   db = client.db(DB_NAME);
   console.log('✅ Connecté à MongoDB (certificats)');
-=======
-  const client = new MongoClient(MONGO_URI, { useUnifiedTopology: true });
-  try {
-    await client.connect();
-    db = client.db(DB_NAME);
-    console.log('✅ Connecté à MongoDB (certificats)');
-  } catch (error) {
-    console.error('❌ Échec de la connexion à MongoDB :', error);
-    process.exit(1);
-  }
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
 }
 
 const certificatService = {
@@ -73,11 +57,7 @@ const certificatService = {
     } catch (error) {
       callback({
         code: grpc.status.INTERNAL,
-<<<<<<< HEAD
         details: 'Erreur interne lors de la récupération',
-=======
-        details: 'Erreur interne lors de la récupération du certificat',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
       });
     }
   },
@@ -106,11 +86,7 @@ const certificatService = {
     } catch (error) {
       callback({
         code: grpc.status.INTERNAL,
-<<<<<<< HEAD
         details: 'Erreur lors de la recherche',
-=======
-        details: 'Erreur lors de la recherche de certificats',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
       });
     }
   },
@@ -143,11 +119,7 @@ const certificatService = {
     } catch (error) {
       callback({
         code: grpc.status.INTERNAL,
-<<<<<<< HEAD
         details: 'Erreur lors de la création',
-=======
-        details: 'Erreur lors de la création du certificat',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
       });
     }
   },
@@ -195,11 +167,7 @@ const certificatService = {
     } catch (error) {
       callback({
         code: grpc.status.INTERNAL,
-<<<<<<< HEAD
         details: 'Erreur lors de la mise à jour',
-=======
-        details: 'Erreur lors de la mise à jour du certificat',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
       });
     }
   },
@@ -210,11 +178,7 @@ const certificatService = {
     if (!ObjectId.isValid(certificat_id)) {
       return callback({
         code: grpc.status.INVALID_ARGUMENT,
-<<<<<<< HEAD
         details: 'ID invalide',
-=======
-        details: 'ID de certificat invalide',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
       });
     }
 
@@ -226,11 +190,7 @@ const certificatService = {
       if (result.deletedCount === 0) {
         return callback({
           code: grpc.status.NOT_FOUND,
-<<<<<<< HEAD
           details: 'Certificat non trouvé',
-=======
-          details: 'Certificat non trouvé pour la suppression',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
         });
       }
 
@@ -238,11 +198,7 @@ const certificatService = {
     } catch (error) {
       callback({
         code: grpc.status.INTERNAL,
-<<<<<<< HEAD
         details: 'Erreur lors de la suppression',
-=======
-        details: 'Erreur lors de la suppression du certificat',
->>>>>>> b955a6a13e6936548dc1d855e8783ac22b452c91
       });
     }
   },
