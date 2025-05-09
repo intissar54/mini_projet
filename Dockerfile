@@ -10,7 +10,7 @@ RUN npm install
 # Copier tout le reste des fichiers
 COPY . .
 
-EXPOSE 3000 50051 50052
+EXPOSE 3005 50051 50052
 
 # Commande par défaut (cela dépend du service que vous souhaitez démarrer)
-CMD ["node", "api/apiGateway.js"]
+CMD ["sh", "-c", "node competenceMicroservice.js & node certificatMicroservice.js & node apiGateway.js"]
