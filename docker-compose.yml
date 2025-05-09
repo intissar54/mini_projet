@@ -4,7 +4,7 @@ services:
   api-gateway:
     build: .
     ports:
-      - "3005:3005"
+      - "3006:3005"
     environment:
       - MONGODB_URI=mongodb://mongo:27017/projet
       - KAFKA_BROKER=kafka:9092
@@ -24,15 +24,28 @@ services:
       - mongo
       - kafka
 
+  competence-service:
+    build: .
+    command: node services/competenceMicroservice.js  # Le fichier de votre service competence
+    ports:
+      - "50052:50052"  # Port pour le service competence
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/projet
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      - mongo
+      - kafka
+
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.0
+    image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
 
   kafka:
-    image: confluentinc/cp-kafka:7.3.0
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
@@ -46,7 +59,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   mongo:
-    image: mongo:6.0
+    image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
