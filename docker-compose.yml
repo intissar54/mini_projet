@@ -24,7 +24,17 @@ services:
       - mongo
       - kafka
 
-  # ... autres services existants
+  competence-service:
+    build: .
+    command: node services/competenceMicroservice.js  # Le fichier de votre service competence
+    ports:
+      - "50052:50052"  # Port pour le service competence
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/projet
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      - mongo
+      - kafka
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
