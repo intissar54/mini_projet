@@ -8,7 +8,6 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({ groupId: 'notification-group' });
 
-// Configuration du transporteur email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -17,39 +16,40 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+async function sendNotificationEmail(certification) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: 'entissarbenaatia@gmail.com',
+    subject: `Nouvelle certification: ${certification.nom}`,
+    html: `
+      <h1>Nouvelle certification créée</h1>
+      <p><strong>Nom:</strong> ${certification.nom}</p>
+      <p><strong>Organisme:</strong> ${certification.organisme_delivrant}</p>
+      <p><strong>Date obtention:</strong> ${new Date(certification.date_obtention).toLocaleDateString()}</p>
+      <p><strong>Compétences:</strong> ${certification.competences}</p>
+    `
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email envoyé:', info.response);
+  } catch (err) {
+    console.error('Erreur envoi email:', err);
+  }
+}
+
 async function runConsumer() {
   await consumer.connect();
   await consumer.subscribe({ topic: 'certification-notifications', fromBeginning: true });
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
+    eachMessage: async ({ message }) => {
       const { type, data } = JSON.parse(message.value.toString());
-      
       if (type === 'NEW_CERTIFICATION') {
-        const mailOptions = {
-          from: process.env.EMAIL_USER,
-          to: 'entissarbenaatia@gmail.com',
-          subject: `Nouvelle certification créée: ${data.nom}`,
-          html: `
-            <h1>Nouvelle certification enregistrée</h1>
-            <p><strong>Nom:</strong> ${data.nom}</p>
-            <p><strong>Organisme:</strong> ${data.organisme_delivrant}</p>
-            <p><strong>Date d'obtention:</strong> ${new Date(data.date_obtention).toLocaleDateString()}</p>
-            ${data.date_expiration ? `<p><strong>Date d'expiration:</strong> ${new Date(data.date_expiration).toLocaleDateString()}</p>` : ''}
-            <p><strong>Compétences:</strong> ${data.competences}</p>
-          `
-        };
-
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error('Erreur lors de l\'envoi de l\'email:', error);
-          } else {
-            console.log('Email de notification envoyé:', info.response);
-          }
-        });
+        await sendNotificationEmail(data);
       }
     }
   });
 }
 
-runConsumer().catch(console.error);
+module.exports = { runConsumer };
