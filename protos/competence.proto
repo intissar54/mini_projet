@@ -1,0 +1,50 @@
+syntax = "proto3";
+package competence;
+
+message Competence {
+  string id = 1;
+  string nom = 2;
+  string niveau = 3;
+  string categorie = 4;
+}
+
+message CreateCompetenceRequest {
+  string nom = 1;
+  string niveau = 2;
+  string categorie = 3;
+}
+
+message GetCompetenceRequest {
+  string competence_id = 1;
+}
+
+message UpdateCompetenceRequest {
+  string competence_id = 1;
+  string nom = 2;
+  string niveau = 3;
+  string categorie = 4;
+}
+
+message DeleteCompetenceRequest {
+  string competence_id = 1;
+}
+
+message DeleteCompetenceResponse {
+  bool success = 1;
+}
+
+message SearchCompetencesRequest {
+  string query = 1;
+}
+
+message SearchCompetencesResponse {
+  repeated Competence competences = 1;
+}
+
+service CompetenceService {
+  rpc GetCompetence(GetCompetenceRequest) returns (Competence);
+  rpc SearchCompetences(SearchCompetencesRequest) returns (SearchCompetencesResponse);
+  rpc CreateCompetence(CreateCompetenceRequest) returns (Competence);
+  rpc UpdateCompetence(UpdateCompetenceRequest) returns (Competence);
+  rpc DeleteCompetence(DeleteCompetenceRequest) returns (DeleteCompetenceResponse);
+}

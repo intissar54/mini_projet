@@ -1,0 +1,50 @@
+syntax = "proto3";
+package certificat;
+
+message Certificat {
+  string id = 1;
+  string nom = 2;
+  string organisation = 3;
+  string date_obtention = 4;
+}
+
+message CreateCertificatRequest {
+  string nom = 1;
+  string organisation = 2;
+  string date_obtention = 3;
+}
+
+message GetCertificatRequest {
+  string certificat_id = 1;
+}
+
+message UpdateCertificatRequest {
+  string certificat_id = 1;
+  string nom = 2;
+  string organisation = 3;
+  string date_obtention = 4;
+}
+
+message DeleteCertificatRequest {
+  string certificat_id = 1;
+}
+
+message DeleteCertificatResponse {
+  bool success = 1;
+}
+
+message SearchCertificatsRequest {
+  string query = 1;
+}
+
+message SearchCertificatsResponse {
+  repeated Certificat certificats = 1;
+}
+
+service CertificatService {
+  rpc GetCertificat(GetCertificatRequest) returns (Certificat);
+  rpc SearchCertificats(SearchCertificatsRequest) returns (SearchCertificatsResponse);
+  rpc CreateCertificat(CreateCertificatRequest) returns (Certificat);
+  rpc UpdateCertificat(UpdateCertificatRequest) returns (Certificat);
+  rpc DeleteCertificat(DeleteCertificatRequest) returns (DeleteCertificatResponse);
+}
