@@ -4,7 +4,7 @@ services:
   api-gateway:
     build: .
     ports:
-      - "3000:3000"
+      - "3006:3005"
     environment:
       - MONGODB_URI=mongodb://mongo:27017/projet
       - KAFKA_BROKER=kafka:9092

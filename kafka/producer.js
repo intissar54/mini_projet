@@ -8,19 +8,24 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 
 async function sendCertificationNotification(certificationData) {
-  await producer.connect();
-  await producer.send({
-    topic: 'certification-notifications',
-    messages: [
-      { 
-        value: JSON.stringify({
-          type: 'NEW_CERTIFICATION',
-          data: certificationData
-        }) 
-      }
-    ]
-  });
-  await producer.disconnect();
+  try {
+    await producer.connect();
+    await producer.send({
+      topic: 'certification-notifications',
+      messages: [
+        { 
+          value: JSON.stringify({
+            type: 'NEW_CERTIFICATION',
+            data: certificationData
+          }) 
+        }
+      ]
+    });
+  } catch (err) {
+    console.error('Erreur Kafka producer:', err);
+  } finally {
+    await producer.disconnect();
+  }
 }
 
 module.exports = { sendCertificationNotification };
