@@ -1,31 +1,27 @@
 const { Kafka } = require('kafkajs');
 
 const kafka = new Kafka({
-  clientId: 'certification-service',
-  brokers: [process.env.KAFKA_BROKER || 'localhost:9092']
+  clientId: 'api-gateway',
+  brokers: [process.env.KAFKA_BROKER || 'kafka:9092']
 });
 
 const producer = kafka.producer();
 
-async function sendCertificationNotification(certificationData) {
+async function sendCertificationEvent(event) {
   try {
     await producer.connect();
     await producer.send({
-      topic: 'certification-notifications',
+      topic: 'certification-events',
       messages: [
-        { 
-          value: JSON.stringify({
-            type: 'NEW_CERTIFICATION',
-            data: certificationData
-          }) 
-        }
+        { value: JSON.stringify(event) }
       ]
     });
-  } catch (err) {
-    console.error('Erreur Kafka producer:', err);
+    console.log('✅ Événement Kafka envoyé:', event.action);
+  } catch (error) {
+    console.error('❌ Erreur envoi Kafka:', error);
   } finally {
     await producer.disconnect();
   }
 }
 
-module.exports = { sendCertificationNotification };
+module.exports = { sendCertificationEvent };
